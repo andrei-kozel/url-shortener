@@ -78,6 +78,17 @@ func (m *mng) IncrementVisits(ctx context.Context, identifier string) error {
 	return nil
 }
 
+func (m *mng) Delete(ctx context.Context, identifier string) error {
+	const op = "storage.mng.Delete"
+
+	_, err := m.col().DeleteOne(ctx, bson.M{"_id": identifier})
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	return nil
+}
+
 type mgnShortening struct {
 	Identifier  string    `bson:"_id"`
 	OriginalUrl string    `bson:"original_url"`
