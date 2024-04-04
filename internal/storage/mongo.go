@@ -46,8 +46,37 @@ func (m *mng) Put(ctx context.Context, shortening model.Shortening) (*model.Shor
 	return &shortening, nil
 }
 
-// TODO: Implement the Get method
-// TODO: Imcrement the visits counter
+func (m *mng) Get(ctx context.Context, identifier string) (*model.Shortening, error) {
+	const op = "storage.mng.Get"
+
+	var shortening mgnShortening
+	err := m.col().FindOne(ctx, bson.M{"_id": identifier}).Decode(&shortening)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return &model.Shortening{
+		Identifier:  shortening.Identifier,
+		OriginalUrl: shortening.OriginalUrl,
+		Visits:      shortening.Visits,
+		CreatedAt:   shortening.CreatedAt,
+		UpdatedAt:   shortening.UpdatedAt,
+	}, nil
+}
+
+func (m *mng) IncrementVisits(ctx context.Context, identifier string) error {
+	const op = "storage.mng.IncrementVisits"
+
+	_, err := m.col().UpdateOne(ctx,
+		bson.M{"_id": identifier},
+		bson.M{"$inc": bson.M{"visits": 1}},
+	)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	return nil
+}
 
 type mgnShortening struct {
 	Identifier  string    `bson:"_id"`
