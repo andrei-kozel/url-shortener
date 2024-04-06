@@ -6,6 +6,10 @@ BINARY_NAME := url_shortener
 # Define flags for the test command
 TEST_FLAGS := -covermode=atomic -coverprofile=coverage.out
 
+# Setup docker-compose
+docker-compose-up:
+	docker-compose up -d
+
 # Default target: run tests
 test:
 	go test $(TEST_FLAGS) ./...
