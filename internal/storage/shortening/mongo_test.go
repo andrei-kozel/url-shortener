@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/andrei-kozel/url-shortener/internal/model"
-	"github.com/andrei-kozel/url-shortener/internal/storage"
+	storage "github.com/andrei-kozel/url-shortener/internal/storage/shortening"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
