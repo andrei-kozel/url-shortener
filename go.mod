@@ -1,14 +1,18 @@
 module github.com/andrei-kozel/url-shortener
 
-go 1.22.1
+go 1.22.2
 
-require github.com/stretchr/testify v1.9.0
+require (
+	github.com/andrei-kozel/go-utils v0.0.1
+	github.com/ilyakaznacheev/cleanenv v1.5.0
+	github.com/joho/godotenv v1.5.1
+	github.com/mattn/go-sqlite3 v1.14.22
+	github.com/stretchr/testify v1.9.0
+)
 
 require (
 	github.com/BurntSushi/toml v1.2.1 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
-	github.com/ilyakaznacheev/cleanenv v1.5.0 // indirect
-	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
