@@ -1,11 +1,15 @@
 package save
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/andrei-kozel/url-shortener/internal/lib/api/response"
+	"github.com/andrei-kozel/url-shortener/internal/lib/random"
+	"github.com/andrei-kozel/url-shortener/internal/storage"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
+	"github.com/go-playground/validator/v10"
 	"golang.org/x/exp/slog"
 )
 
@@ -22,6 +26,8 @@ type Response struct {
 type URLSaver interface {
 	SaveURL(urlToSave string, alias string) (int64, error)
 }
+
+const aliasLength = 8
 
 func New(log *slog.Logger, urlSaver URLSaver) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -40,18 +46,46 @@ func New(log *slog.Logger, urlSaver URLSaver) http.HandlerFunc {
 			return
 		}
 
-		log.Info("saving url...", "url", req.URL, "alias", req.Alias)
+		log.Info("request body decoded", "req", req)
 
-		id, err := urlSaver.SaveURL(req.URL, req.Alias)
-		if err != nil {
-			log.Error("failed to save url", err)
-			render.JSON(w, r, response.Error("failed to save url"))
+		if err := validator.New().Struct(req); err != nil {
+			validteErr := err.(validator.ValidationErrors)
+			log.Error("validation failed", "error", validteErr)
+
+			render.JSON(w, r, response.Error("validation failed"))
+			render.JSON(w, r, response.ValidationError(validteErr))
+
 			return
 		}
 
+		log.Info("saving url...", "url", req.URL, "alias", req.Alias)
+
+		alias := req.Alias
+		if alias == "" {
+			alias = random.NewRandomString(aliasLength)
+		}
+
+		id, err := urlSaver.SaveURL(req.URL, alias)
+		if errors.Is(err, storage.ErrURLExists) {
+			log.Error("url already exist", err)
+
+			render.JSON(w, r, response.Error("failed to save url"))
+
+			return
+		}
+		if err != nil {
+			log.Error("failed to save url", err)
+
+			render.JSON(w, r, response.Error("failed to save url"))
+
+			return
+		}
+
+		log.Info("url saved", "id", id)
+
 		render.JSON(w, r, Response{
 			Response: response.OK(),
-			Alias:    req.Alias,
+			Alias:    alias,
 		})
 	}
 }
