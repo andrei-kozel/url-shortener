@@ -2,6 +2,7 @@ package save
 
 import (
 	"errors"
+	"log/slog"
 	"net/http"
 
 	"github.com/andrei-kozel/url-shortener/internal/lib/api/response"
@@ -10,7 +11,6 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
 	"github.com/go-playground/validator/v10"
-	"golang.org/x/exp/slog"
 )
 
 type Request struct {
