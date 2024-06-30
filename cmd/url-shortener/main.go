@@ -9,7 +9,7 @@ import (
 	"github.com/andrei-kozel/url-shortener/internal/http-server/handlers/redirect"
 	"github.com/andrei-kozel/url-shortener/internal/http-server/handlers/url/save"
 	"github.com/andrei-kozel/url-shortener/internal/storage/sqlite"
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
 
