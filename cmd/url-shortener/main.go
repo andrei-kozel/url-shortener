@@ -6,6 +6,7 @@ import (
 
 	"github.com/andrei-kozel/go-utils/utils/prettylog"
 	"github.com/andrei-kozel/url-shortener/internal/config"
+	"github.com/andrei-kozel/url-shortener/internal/http-server/handlers/redirect"
 	"github.com/andrei-kozel/url-shortener/internal/http-server/handlers/url/save"
 	"github.com/andrei-kozel/url-shortener/internal/storage/sqlite"
 	"github.com/go-chi/chi"
@@ -40,6 +41,7 @@ func main() {
 
 	// routes
 	router.Post("/url", save.New(log, storage))
+	router.Get("/{alias}", redirect.New(log, storage))
 
 	log.Info("starting http server...", "port", cfg.HTTPServer.Address)
 
